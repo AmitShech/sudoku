@@ -8,34 +8,48 @@ using System.Threading.Tasks;
 
 namespace Suduko
 {
-    internal class SolveBoard
+    public class SolveBoard
     {
         private Board board;
-        public SolveBoard(Board board) { this.board = board; }
 
-        public bool FillSingleOptionCells()
+        public SolveBoard(Board board)
         {
-            bool progress = false;
-
-            for (int row = 0; row < board.Size; row++)
-            {
-                for (int col = 0; col < board.Size; col++)
-                {
-                    var cell = board.Cells[row, col];
-                    if (!cell.IsEmpty()) continue;
-                    if (cell.PossibleOptions.Count == 1)
-                    {
-                        cell.SetValue(cell.PossibleOptions.First());
-                        FillCells.UpdateAffectedCells(board,cell);
-                        progress = true;
-                    }
-                }
-            }
-
-            return progress;
+            this.board = board;
         }
 
-        public Cell MinOptions()
+
+        public bool Solve()
+        {
+            return true;
+        }
+
+        public bool Backtracking()
+        {
+            Cell cell = FindCellWithMinOptions();
+
+            if (cell == null)
+            {
+                return true;
+            }
+
+            foreach (int option in GetOrderedPossibleOptions(cell))
+            {
+                cell.SetValue(option);
+                board.SetCellValue(cell.Row, cell.Column, option);
+
+                if (Backtracking())
+                {
+                    return true;
+                }
+
+                board.ClearCellValue(cell.Row, cell.Column);
+                cell.ClearValue();
+            }
+
+            return false;
+        }
+
+        private Cell FindCellWithMinOptions()
         {
             Cell bestCell = null;
             int minOptions = int.MaxValue;
@@ -46,9 +60,11 @@ namespace Suduko
                 {
                     var cell = board.Cells[row, col];
                     if (!cell.IsEmpty()) continue;
-                    if (cell.PossibleOptions.Count < minOptions)
+
+                    int optionsCount = cell.GetPossibleOptionsCount();
+                    if (optionsCount < minOptions)
                     {
-                        minOptions = cell.PossibleOptions.Count;
+                        minOptions = optionsCount;
                         bestCell = cell;
                     }
                 }
@@ -56,71 +72,27 @@ namespace Suduko
             return bestCell;
         }
 
-        private int FindConstrainingImpact(Cell cell, int value)
+        private IEnumerable<int> GetOrderedPossibleOptions(Cell cell)
+        {
+            return Enumerable.Range(1, board.Size)
+                .Where(cell.HasPossibleOption)
+                .OrderByDescending(option => CalculateConstrainingImpact(cell, option));
+        }
+
+        private int CalculateConstrainingImpact(Cell cell, int value)
         {
             int impact = 0;
 
-            for (int col = 0; col < board.Size; col++)
+            for (int i = 0; i < board.Size; i++)
             {
-                if (board.Cells[cell.Row, col].IsEmpty() && board.Cells[cell.Row, col].PossibleOptions.Contains(value))
-                {
+                if (board.Cells[cell.Row, i].IsEmpty() && board.CanPlaceValue(cell.Row, i, value))
                     impact++;
-                }
-            }
 
-            for (int row = 0; row < board.Size; row++)
-            {
-                if (board.Cells[row, cell.Column].IsEmpty() && board.Cells[row, cell.Column].PossibleOptions.Contains(value))
-                {
+                if (board.Cells[i, cell.Column].IsEmpty() && board.CanPlaceValue(i, cell.Column, value))
                     impact++;
-                }
-            }
-
-            int startRow = (cell.Row / board.CubeSize) * board.CubeSize;
-            int startCol = (cell.Column / board.CubeSize) * board.CubeSize;
-
-            for (int r = 0; r < board.CubeSize; r++)
-            {
-                for (int c = 0; c < board.CubeSize; c++)
-                {
-                    var cubeCell = board.Cells[startRow + r, startCol + c];
-                    if (cubeCell.IsEmpty() && cubeCell.PossibleOptions.Contains(value))
-                    {
-                        impact++;
-                    }
-                }
             }
 
             return impact;
         }
-
-        public bool Backtracking(){
-            Cell cell = MinOptions();
-
-            if (cell == null)
-            {
-                return true;
-            }
-
-            foreach (var option in cell.PossibleOptions.OrderByDescending(val => FindConstrainingImpact(cell, val)))
-            {
-                cell.SetValue(option);
-                FillCells.UpdateAffectedCells(board, cell);
-
-
-                if (Backtracking())
-                {
-                    return true; 
-                }
-
-                    
-                cell.ClearValue();
-                FillCells.UpdateAffectedCells(board, cell);
-            }
-
-            return false; 
-        }
-
-
     }
 }
