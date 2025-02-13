@@ -42,51 +42,5 @@ namespace Sudoku
                 throw new InputException("Input is empty.");
         }
 
-
-        public static void DuplicatesInBoard(Board board)
-        {
-            int size = board.Size;
-
-            // בדיקת שורות
-            foreach (var row in board.Rows)
-            {
-                if (HasDuplicates(row))
-                    return true; // לוח לא תקין
-            }
-
-            // בדיקת עמודות
-            foreach (var col in board.Cols)
-            {
-                if (HasDuplicates(col))
-                    return true; // לוח לא תקין
-            }
-
-            // בדיקת קוביות
-            foreach (var cube in board.Cubes)
-            {
-                if (HasDuplicates(cube))
-                    return true; // לוח לא תקין
-            }
-
-            return false; // הלוח תקין
-        }
-
-        private static bool HasDuplicates(CellGroup group)
-        {
-            HashSet<int> seen = new HashSet<int>();
-
-            foreach (var cell in group.GetEmptyCells())
-            {
-                int value = cell.GetValue();
-                if (value != 0)
-                {
-                    if (!seen.Add(value))
-                        return true;
-                }
-            }
-            return false;
-        }
-
-
     }
 }
