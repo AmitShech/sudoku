@@ -1,50 +1,61 @@
 ﻿using Sudoku;
 using System;
 using System.Diagnostics;
+using static Sudoku.Ui;
+
 
 namespace Sudoku
 {
-    class Program
+
+    /// <summary>
+    /// The entry point of the application. This class orchestrates the main program flow:
+    /// reading input, validating, solving the board, and displaying results.
+    /// </summary>
+    public static class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// Main method: repeatedly gets board input from the user, validates it,
+        /// creates a board, solves it, and displays the result.
+        /// </summary>
+        public static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to Sudoku Solver!");
-            Console.WriteLine("Please enter a Sudoku Board (use 0 for empty cells).");
-            Console.WriteLine("Enter 'end' to exit.");
+            InputValidator.CtrlCHandler();
 
-            string input = Console.ReadLine();
-            while (input != "end")
+            Console.WriteLine("WELCOME TO SUDOKU SOLVER!");
+            Console.WriteLine("Please enter a Sudoku board:");
+            Console.WriteLine(" - You can enter a string representing the board");
+            Console.WriteLine(" - Or provide a path to a text file (txt) containing the board");
+
+            while (true)
             {
-                try
-                {
-                    InputValidator.IsValidInput(input);
-                    Board board = new Board(input);
 
-                    var solver = new SudokuSolver(board);
-                    Stopwatch stopwatch = Stopwatch.StartNew();
-                    bool solved = solver.Solve();
-                    stopwatch.Stop();
+                string input = Ui.GetBoardInput();
+                if (input == null)
+                    break;
 
-                    if (solved)
-                    {
-                        Console.WriteLine("\nSolved Sudoku Board:");
-                        Console.WriteLine(board.GetBoardString());
-                        Console.WriteLine($"\nSolution Time: {stopwatch.ElapsedMilliseconds} ms");
-                    }
-                    else
-                    {
-                        Console.WriteLine("\nNo solution exists for the given Sudoku board.");
-                        Console.WriteLine($"\nElapsed Time: {stopwatch.ElapsedMilliseconds} ms");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
-                Console.WriteLine("\nPlease enter a Sudoku Board (or 'end' to exit):");
-                input = Console.ReadLine();
+                if (!InputValidator.IsValidInput(input)) { continue; }
+
+                Board board = new Board(input);
+
+                if (!BoardValidator.IsBoardValid(board)) { continue; }
+                    
+                Ui.BoardToGrid(board);
+
+
+                Stopwatch stopwatch = Stopwatch.StartNew();
+
+                SudokuSolver solver = new SudokuSolver(board);
+                bool solved = solver.Solve();
+
+                stopwatch.Stop();
+                long elapsedTime = stopwatch.ElapsedMilliseconds;
+
+                Ui.DisplayResult(board, solved, elapsedTime);
             }
-            Console.WriteLine("The program has ended.");
+
+            Console.WriteLine("\nProgram ended. Thank you and goodbye!");
         }
+
+        
     }
 }

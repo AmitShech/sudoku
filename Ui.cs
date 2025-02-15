@@ -8,102 +8,90 @@ using System.Threading.Tasks;
 
 namespace Sudoku
 {
+    /// <summary>
+    /// The Ui class handles all user interactions: reading input from the user and displaying
+    /// the board (both as a grid and as a single string) along with the solution result.
+    /// </summary>
     public static class Ui
     {
 
-        public static void display()
+        /// <summary>
+        /// Reads a board string from the user or from a file.
+        /// </summary>
+        /// <returns>A string representing the board or null to exit.</returns>
+        public static string GetBoardInput()
         {
-            Console.WriteLine(" WELCOME TO SUDOKU SOLVER!");
-            Console.WriteLine("Please enter a Sudoku board:");
-            Console.WriteLine(" - You can enter a string representing the board ");
-            Console.WriteLine(" - Or provide a path to a text file (txt) containing the board");
 
-            while (true)
+            Console.Write("\nEnter board or file path (or type 'end' to exit): ");
+            string input = Console.ReadLine();
+
+            if (input.Trim().ToLower() == "end")
             {
-                Console.Write("\nEnter board or file path: ");
-                Console.WriteLine("To exit, type 'end'");
+                return null;
+            }
 
-                 
-                string input = Console.ReadLine();
-
-                if (input.ToLower() == "end")
-                    break;
-
-                if (File.Exists(input))
-                {
-                    try
-                    {
-                        input = File.ReadAllText(input);
-                        input = input.Replace("\r", "").Replace("\n", "").Replace(" ", "");
-                        Console.WriteLine("File loaded successfully.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Error reading file: " + ex.Message);
-                        continue;
-                    }
-                }
-
-                Board board = new Board(input);
-                bool printString=false;
-
-                BoardToGrid(board);
-                
-                //טיפול בקלט ctrl z ןc
-
+            if (File.Exists(input))
+            {
                 try
                 {
-                    //בדיקת תקינות לוח
-                    InputValidator.IsValidInput(input);
-                    BoardValidator.IsBoardValid(board);
+                    input = File.ReadAllText(input);
+                    input = input.Replace("\r", "").Replace("\n", "").Replace(" ", "");
+                    Console.WriteLine("File loaded successfully.");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error: {ex.Message}");
-                    continue;
+                    throw new Exception("Error reading file: " + ex.Message);
                 }
-                //קריאה לפיתרון
-                SudokuSolver solver = new SudokuSolver(board);
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                bool solved = solver.Solve();
-                stopwatch.Stop();
-
-                //הדפסת פיתרון
-                if (solved)
-                {
-                    Console.WriteLine("\nSolved Sudoku Board:");
-                    BoardToGrid(board);
-                    Console.WriteLine($"\nSolution Time: {stopwatch.ElapsedMilliseconds} ms");
-
-                    Console.WriteLine("\nPress 'S' to see the board as a single string, or any other key to continue.");
-                    if (Console.ReadKey().Key == ConsoleKey.S)
-                    {
-                        printString = true;
-                    }
-
-                    if (printString)
-                    {
-                        BoardToString(board);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("\nNo solution exists for the given Sudoku board.");
-                    Console.WriteLine($"\nElapsed Time: {stopwatch.ElapsedMilliseconds} ms");
-                }
-
             }
 
-            Console.WriteLine("\nProgram ended. Thank you and goodbye!");
+            return input;
         }
 
+        /// <summary>
+        /// Displays the solution results.
+        /// </summary>
+        /// <param name="board">The solved (or attempted) board.</param>
+        /// <param name="solved">True if the board was solved.</param>
+        /// <param name="elapsedTime">The time it took to solve, in milliseconds.</param>
+        public static void DisplayResult(Board board, bool solved, long elapsedTime)
+        {
+            if (solved)
+            {
+                Console.WriteLine("\nSolved Sudoku Board:");
+                Ui.BoardToGrid(board);
+                Console.WriteLine($"\nSolution Time: {elapsedTime} ms");
+
+                Console.WriteLine("\nPress 'S' to see the board as a single string, or any other key to continue.");
+                if (Console.ReadKey().Key == ConsoleKey.S)
+                {
+                    Ui.BoardToString(board);
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nNo solution exists for the given Sudoku board.");
+                Console.WriteLine($"\nElapsed Time: {elapsedTime} ms");
+            }
+        }
+
+        /// <summary>
+        /// Converts a numeric value to its ASCII representation.
+        /// Zero is represented as an underscore ('_').
+        /// </summary>
+        /// <param name="value">The cell value to convert.</param>
+        /// <returns> An underscore if the value is zero; otherwise, the corresponding numeric character.</returns>
         private static char ValueToAscii(int value)
         {
             if (value == 0) return '_';  
             return (char)('0' + value);  
         }
 
-        private static void BoardToString(Board board)
+        /// <summary>
+        /// Displays the board as a single string representation.
+        /// Each cell value is printed on a new line.
+        /// </summary>
+        /// <param name="board">The board to display.</param>
+        public static void BoardToString(Board board)
         {
             Console.WriteLine("\nString representation:");
             
@@ -117,6 +105,10 @@ namespace Sudoku
 
         }
 
+        /// <summary>
+        /// Displays the board in a grid format with borders.
+        /// </summary>
+        /// <param name="board">The board to display.</param>
         public static void BoardToGrid(Board board)
         {
             int size = board.size;
@@ -151,34 +143,11 @@ namespace Sudoku
            
         }
 
+
     }
 }
 
 
-//try
-//{
-//    InputValidator.IsValidInput(input);
-
-
-//    SolveBoard solver = new SolveBoard(board);
-
-//    Console.WriteLine("Solving the board...");
-//    bool solved = solver.Solve();
-
-//    if (solved)
-//    {
-//        Console.WriteLine("Sudoku solved successfully! Solution:");
-//        board.PrintBoard();
-//    }
-//    else
-//    {
-//        Console.WriteLine("No solution exists for the given Sudoku board.");
-//    }
-//}
-//catch (Exception ex)
-//{
-//    Console.WriteLine("Error: " + ex.Message);
-//}
 
 
 
