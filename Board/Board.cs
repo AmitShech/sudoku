@@ -108,28 +108,5 @@
             cubes[GetCubeIndex(row, col)].UpdateMask();
         }
 
-        /// <summary>
-        /// Returns a string representation of the board.
-        /// </summary>
-        public string GetBoardString()
-        {
-            var sb = new System.Text.StringBuilder();
-            for (int row = 0; row < size; row++)
-            {
-                if (row % cubeSize == 0 && row != 0)
-                    sb.AppendLine(new string('-', size * 2 + cubeSize - 1));
-
-                for (int col = 0; col < size; col++)
-                {
-                    if (col % cubeSize == 0 && col != 0)
-                        sb.Append("| ");
-
-                    int cellValue = cells[row, col].GetValue();
-                    sb.Append(cellValue == 0 ? "_ " : $"{cellValue} ");
-                }
-                sb.AppendLine();
-            }
-            return sb.ToString();
-        }
     }
 }
