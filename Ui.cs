@@ -59,7 +59,7 @@ namespace Sudoku
                 {
                     BoardToGrid(board);
                 }
-
+                //טיפול בקלט ctrl z ןc
                 try
                 {
                     //בדיקת תקינות לוח
@@ -79,6 +79,12 @@ namespace Sudoku
             Console.WriteLine("\nProgram ended. Thank you and goodbye!");
         }
 
+        private static char ValueToAscii(int value)
+        {
+            if (value == 0) return '_';  
+            return (char)('0' + value);  
+        }
+
         private static void BoardToString(Board board)
         {
             Console.WriteLine("\nString representation:");
@@ -87,15 +93,44 @@ namespace Sudoku
             {
                 for (int col = 0; col < board.size; col++)
                 {
-                    Console.WriteLine(board.cells[row, col].GetValue());
+                    Console.WriteLine(ValueToAscii(board.cells[row, col].GetValue()));
                 }
             }
 
         }
 
-        private static void BoardToGrid(Board board)
+        public static void BoardToGrid(Board board)
         {
+            int size = board.size;
+            int cubeSize = board.cubeSize; 
 
+            int totalWidth = (cubeSize * 2 + 1) * cubeSize + cubeSize - 1;
+
+            string horizontalLine = new string('═', totalWidth);
+            string middleSeparator = new string('─', totalWidth);
+
+            Console.WriteLine("╔" + horizontalLine + "╗");
+
+            for (int row = 0; row < size; row++)
+            {
+                if (row > 0 && row % cubeSize == 0)
+                    Console.WriteLine("╠" + middleSeparator + "╣");
+
+                for (int col = 0; col < size; col++)
+                {
+                    if (col % cubeSize == 0)
+                        Console.Write("║ ");
+
+                    int value = board.cells[row, col].GetValue();
+                    string cellValue = (value == 0) ? "_" : ValueToAscii(value).ToString();
+
+                    Console.Write(cellValue.PadLeft(1) + " ");
+                }
+                Console.WriteLine("║");
+            }
+
+            Console.WriteLine("╚" + horizontalLine + "╝");
+           
         }
 
     }
