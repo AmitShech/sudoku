@@ -1,6 +1,7 @@
 ﻿using Sudoku;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace Sudoku
                 Console.Write("\nEnter board or file path: ");
                 Console.WriteLine("To exit, type 'end'");
 
+                 
                 string input = Console.ReadLine();
 
                 if (input.ToLower() == "end")
@@ -45,21 +47,10 @@ namespace Sudoku
                 Board board = new Board(input);
                 bool printString=false;
 
-                Console.WriteLine("\nPress 'S' to see the board as a single string, or any other key to continue.");
-                if (Console.ReadKey().Key == ConsoleKey.S)
-                {
-                    printString = true;
-                }
-
-                if (printString)
-                {
-                    BoardToString(board);
-                }
-                else
-                {
-                    BoardToGrid(board);
-                }
+                BoardToGrid(board);
+                
                 //טיפול בקלט ctrl z ןc
+
                 try
                 {
                     //בדיקת תקינות לוח
@@ -72,8 +63,35 @@ namespace Sudoku
                     continue;
                 }
                 //קריאה לפיתרון
+                SudokuSolver solver = new SudokuSolver(board);
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                bool solved = solver.Solve();
+                stopwatch.Stop();
 
                 //הדפסת פיתרון
+                if (solved)
+                {
+                    Console.WriteLine("\nSolved Sudoku Board:");
+                    BoardToGrid(board);
+                    Console.WriteLine($"\nSolution Time: {stopwatch.ElapsedMilliseconds} ms");
+
+                    Console.WriteLine("\nPress 'S' to see the board as a single string, or any other key to continue.");
+                    if (Console.ReadKey().Key == ConsoleKey.S)
+                    {
+                        printString = true;
+                    }
+
+                    if (printString)
+                    {
+                        BoardToString(board);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\nNo solution exists for the given Sudoku board.");
+                    Console.WriteLine($"\nElapsed Time: {stopwatch.ElapsedMilliseconds} ms");
+                }
+
             }
 
             Console.WriteLine("\nProgram ended. Thank you and goodbye!");
