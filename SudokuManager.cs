@@ -1,23 +1,25 @@
-﻿using Sudoku;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using static Sudoku.Ui;
-
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Sudoku
 {
 
     /// <summary>
-    /// The entry point of the application. This class orchestrates the main program flow:
+    /// The entry point of the application. This class orchestrates the program flow:
     /// reading input, validating, solving the board, and displaying results.
     /// </summary>
-    public static class Program
+
+    public static class SudokuManager
     {
         /// <summary>
         /// Main method: repeatedly gets board input from the user, validates it,
         /// creates a board, solves it, and displays the result.
         /// </summary>
-        public static void Main(string[] args)
+        public static void Run()
         {
             InputValidator.CtrlCHandler();
 
@@ -38,7 +40,7 @@ namespace Sudoku
                 Board board = new Board(input);
 
                 if (!BoardValidator.IsBoardValid(board)) { continue; }
-                    
+
                 Ui.BoardToGrid(board);
 
 
@@ -55,7 +57,5 @@ namespace Sudoku
 
             Console.WriteLine("\nProgram ended. Thank you and goodbye!");
         }
-
-        
     }
 }
