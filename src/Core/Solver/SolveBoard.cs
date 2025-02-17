@@ -8,6 +8,7 @@ namespace Sudoku.src.Core.Solver
     {
         private readonly Board board;
         private readonly List<ISudokuRule> heuristics;
+        private readonly NakedGeneric rule;
 
 
         /// <summary>
@@ -18,13 +19,28 @@ namespace Sudoku.src.Core.Solver
         {
             this.board = board;
 
+            rule = new NakedGeneric();
+
             heuristics = new List<ISudokuRule>
             {
                 new NakedSingle(),
                 new HiddenSingle(),
-                new NakedGeneric()
             };
 
+        }
+
+        public bool RecursiveSolve()
+        {
+            bool progress = true;
+            while (progress && BoardValidator.IsSolvable(board))
+            {
+                progress = ApplyHeuristics();
+            }
+
+            if (!BoardValidator.IsSolvable(board))
+                return false;
+
+            return Backtracking();
         }
 
         /// <summary>
@@ -35,12 +51,14 @@ namespace Sudoku.src.Core.Solver
         {
 
             bool progress = true;
-            while (progress && board.IsValid())
+            rule.Apply(board);
+
+            while (progress && BoardValidator.IsSolvable(board))
             {
                 progress = ApplyHeuristics();
             }
 
-            if (!board.IsValid())
+            if (!BoardValidator.IsSolvable(board))
                 return false;
 
             return Backtracking();
@@ -83,9 +101,10 @@ namespace Sudoku.src.Core.Solver
                 board.SetValue(cell.row, cell.col, value);
                 board.CalculateAllOptions();
 
-                if (Solve())
+                if (RecursiveSolve())
                     return true;
 
+                cell.RemoveOption(value);
                 RestoreState(stateBackup);
                 board.CalculateAllOptions();
             }
