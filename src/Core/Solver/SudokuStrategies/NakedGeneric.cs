@@ -21,6 +21,8 @@ namespace Sudoku.src.Core.Solver.SudokuStrategies
 
             if (board.size > 9)
                 AmountOfIterations = 2;
+            if( SudokuSolver.iterations>6)
+                AmountOfIterations = 2;
 
             for (int size = 2; size <= Math.Min(board.size, AmountOfIterations); size++)
             {

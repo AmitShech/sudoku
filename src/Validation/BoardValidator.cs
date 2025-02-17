@@ -1,6 +1,5 @@
 ﻿using Sudoku.src.Core.SudokuBoard;
 using Sudoku.src.Exceptions;
-using System.Drawing;
 
 /// <summary>
 /// Provides methods to validate a Sudoku board by checking for duplicate values
@@ -26,11 +25,13 @@ public static class BoardValidator
         return true;
     }
 
-    public static bool IsSolvable(Board board)
-    {
-        return CellHasNoOptions(board);
-    }
-    private static bool CellHasNoOptions(Board board)
+    /// <summary>
+    /// Checks if the board is solvable by checking that all cells has options.
+    /// If cell with no options is found, the method returns false.
+    /// </summary>
+    /// <param name="board">The Sudoku board to validate.</param>
+    /// <returns>True if the board is solvable; otherwise, false.</returns>
+    private static bool IsSolvable(Board board)
     {
         for (int row = 0; row < board.size; row++)
         {
@@ -40,10 +41,10 @@ public static class BoardValidator
                     continue;
 
                 if (board.cells[row, col].possibleOptionsMask == 0)
-                    return true;
+                    return false;
             }
         }
-        return false;
+        return true;
     }
 
     /// <summary>

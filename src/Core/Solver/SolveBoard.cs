@@ -10,13 +10,14 @@ namespace Sudoku.src.Core.Solver
         private readonly List<ISudokuRule> heuristics;
         private readonly NakedGeneric rule;
 
+        public static int iterations = 0;
 
         /// <summary>
         /// Initializes a new instance of the SudokuSolver class with a given board.
         /// </summary>
         /// <param name="board">The Sudoku board to solve.</param>
         public SudokuSolver(Board board)
-        {
+        {   
             this.board = board;
 
             rule = new NakedGeneric();
@@ -25,6 +26,7 @@ namespace Sudoku.src.Core.Solver
             {
                 new NakedSingle(),
                 new HiddenSingle(),
+                new NakedGeneric(),
             };
 
         }
@@ -49,14 +51,13 @@ namespace Sudoku.src.Core.Solver
         /// <returns>True if the board is solved; otherwise false.</returns>
         public bool Solve()
         {
-
             bool progress = true;
-            rule.Apply(board);
 
             while (progress && BoardValidator.IsSolvable(board))
             {
                 progress = ApplyHeuristics();
             }
+            //rule.Apply(board);
 
             if (!BoardValidator.IsSolvable(board))
                 return false;
@@ -88,6 +89,7 @@ namespace Sudoku.src.Core.Solver
         /// </summary>
         private bool Backtracking()
         {
+            iterations++;
             Cell cell = FindCellWithFewestOptions();
             if (cell == null) return true;
 
