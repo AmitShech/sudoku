@@ -38,7 +38,7 @@ namespace Sudoku.src
 
                 Board board = new Board(input);
 
-                if (!BoardValidator.IsBoardValid(board)) { continue; }
+                if (!BoardValidator.IsValid(board)) { continue; }
 
                 BoardPrinter.PrintBoard(board);
 

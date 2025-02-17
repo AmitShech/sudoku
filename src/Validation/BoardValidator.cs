@@ -1,12 +1,14 @@
 ﻿using Sudoku.src.Core.SudokuBoard;
 using Sudoku.src.Exceptions;
+using System.Drawing;
 
 /// <summary>
 /// Provides methods to validate a Sudoku board by checking for duplicate values
 /// in rows, columns, and cubes.
 /// </summary>
 public static class BoardValidator
-{   
+{
+   
     /// <summary>
     /// Checks if the board is valid by verifying that no duplicates exist in any row, column, or cube.
     /// If any duplicate is found, an error message is printed and the method returns false.
@@ -24,12 +26,32 @@ public static class BoardValidator
         return true;
     }
 
+    public static bool IsSolvable(Board board)
+    {
+        return CellHasNoOptions(board);
+    }
+    private static bool CellHasNoOptions(Board board)
+    {
+        for (int row = 0; row < board.size; row++)
+        {
+            for (int col = 0; col < board.size; col++)
+            {
+                if (!board.cells[row, col].IsEmpty())
+                    continue;
+
+                if (board.cells[row, col].possibleOptionsMask == 0)
+                    return true;
+            }
+        }
+        return false;
+    }
+
     /// <summary>
     /// Checks each row, column, and cube of the board for duplicate numbers.
     /// Throws an InvalidBoardException if any duplicate is detected.
     /// </summary>
     /// <param name="board">The Sudoku board to check for duplicates.</param>
-    public static void DuplicatesInBoard(Board board)
+    private static void DuplicatesInBoard(Board board)
     {
         int i = 0;
         foreach (var row in board.rows)

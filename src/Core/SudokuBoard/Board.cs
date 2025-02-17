@@ -112,21 +112,5 @@
             cols[col].UpdateMask();
             cubes[GetCubeIndex(row, col)].UpdateMask();
         }
-
-        public bool IsValid()
-        {
-            for (int row = 0; row < size; row++)
-            {
-                for (int col = 0; col < size; col++)
-                {
-                    if (!cells[row, col].IsEmpty())
-                        continue;
-
-                    if (cells[row, col].possibleOptionsMask == 0)
-                        return false;
-                }
-            }
-            return true;
-        }
     }
 }
