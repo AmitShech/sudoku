@@ -16,6 +16,7 @@
             possibleOptionsMask = (1 << this.size) - 1;
         }
 
+        public List<Cell> GetCells() { return cells; }
         public int GetMask() => possibleOptionsMask;
         public void SetMask(int mask) => possibleOptionsMask = mask;
 
