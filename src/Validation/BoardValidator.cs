@@ -6,14 +6,14 @@ using Sudoku.src.Exceptions;
 /// in rows, columns, and cubes.
 /// </summary>
 public static class BoardValidator
-{
+{   
     /// <summary>
     /// Checks if the board is valid by verifying that no duplicates exist in any row, column, or cube.
     /// If any duplicate is found, an error message is printed and the method returns false.
     /// </summary>
     /// <param name="board">The Sudoku board to validate.</param>
     /// <returns>True if the board is valid; otherwise, false.</returns>
-    public static bool IsBoardValid(Board board)
+    public static bool IsValid(Board board)
     {
         try { DuplicatesInBoard(board); }
         catch (Exception e)
@@ -31,9 +31,7 @@ public static class BoardValidator
     /// <param name="board">The Sudoku board to check for duplicates.</param>
     public static void DuplicatesInBoard(Board board)
     {
-        int size = board.size;
         int i = 0;
-
         foreach (var row in board.rows)
         {
             i++;
@@ -56,8 +54,6 @@ public static class BoardValidator
             if (HasDuplicates(cube))
                 throw new InvalidBoardException($"The board is invalid, duplicate number detected in cube {i}.");
         }
-
-
     }
 
     /// <summary>
@@ -70,7 +66,7 @@ public static class BoardValidator
     {
         HashSet<int> seen = new HashSet<int>();
 
-        foreach (var cell in group.GetEmptyCells())
+        foreach (Cell cell in group.GetCells())
         {
             int value = cell.GetValue();
             if (value != 0)
