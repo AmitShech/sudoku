@@ -12,6 +12,7 @@ namespace Sudoku.src.Core.Solver.SudokuStrategies
         public static int AmountOfIterations = 8;
         /// <summary>
         /// Applies the naked candidates elimination to the entire board.
+        /// if the board is bigger then 9X9 or the algorithem already did 6 iteration the func will apply only naked pairs. 
         /// </summary>
         /// <param name="board">The Sudoku board.</param>
         /// <returns>True if any changes were made to the board; otherwise, false.</returns>
@@ -19,9 +20,7 @@ namespace Sudoku.src.Core.Solver.SudokuStrategies
         {
             bool changed = false;
 
-            if (board.size > 9)
-                AmountOfIterations = 2;
-            if( SudokuSolver.iterations>6)
+            if ((board.size > 9)|| (SudokuSolver.RecIterations > 6))
                 AmountOfIterations = 2;
 
             for (int size = 2; size <= Math.Min(board.size, AmountOfIterations); size++)

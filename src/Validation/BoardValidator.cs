@@ -31,7 +31,7 @@ public static class BoardValidator
     /// </summary>
     /// <param name="board">The Sudoku board to validate.</param>
     /// <returns>True if the board is solvable; otherwise, false.</returns>
-    private static bool IsSolvable(Board board)
+    public static bool IsSolvable(Board board)
     {
         for (int row = 0; row < board.size; row++)
         {
