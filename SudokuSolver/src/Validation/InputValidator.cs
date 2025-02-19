@@ -59,13 +59,18 @@ namespace Sudoku.src.Validation
         /// <param name="size">The calculated board size (number of rows or columns).</param>
 
         private static void CorrectSize(string input, int size)
-        {
+        {   
             if (size * size != input.Length)
                 throw new InputException("The input length does not form a square board.");
 
             int cube = (int)Math.Sqrt(size);
             if (cube * cube != size)
                 throw new InputException("The board size does not form a valid cube.");
+
+            if (size > 25)
+            {
+                throw new InputException("The input length creates a board larger than the allowed size (25x25).");
+            }
         }
 
         /// <summary>
