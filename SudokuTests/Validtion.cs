@@ -20,6 +20,7 @@ namespace SudokuTests
                 new object[] { "1234567890", false, "Non-square length should be invalid." },
                 new object[] { "1234512345123451234512345", false, "Non-cube board should be invalid." },
                 new object[] { new string('0', 81), true, "81 zeros should form a valid 9x9 board." },
+                new object[] { new string('0', 4096), false, "4069 zeros form a 64X64 board that is invalid." },
                 new object[] { "12A4567890", false, "'A' in 10-length string is invalid." },
                 new object[]
                 {
